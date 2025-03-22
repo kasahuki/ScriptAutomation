@@ -1,10 +1,14 @@
-# SCRIPT & DOC?EXCEL? の AUTOMATIC、
+#  SCRIPT & DOC?EXCEL? の AUTOMATIC、
 
 ## bat(powershell) 
 
 **==bat（cmd/powershell）用于系统级别的自动化脚本==**
 
+### WSL powershell/cmd 混用 
 
+前面的是powershell 语法 后面 加个wsl 即可用bash语法
+
+![image-20241230215631002](https://cdn.jsdelivr.net/gh/kasahuki/os_test@main/img/image-20241230215631002.png)
 
 ### BAT（批处理）文件的主要用途：
 
@@ -228,3 +232,233 @@ Python 拥有丰富的第三方库，几乎覆盖了所有应用领域。以下�
 
 
 
+# Python工具箱
+
+## FAKER
+
+~~~python
+# 用处：爬虫请求头…… （需要表单数据时）
+from faker import Faker
+fake = Faker('zh-CN') # 指定地区语言 组成：语言代码-国家（地区）代码
+
+student = []
+
+
+for i in range(5):
+  student.append({"name":fake.name(),"address":fake.address(), "phone":fake.phone_number()})
+
+# for i in range(len(student)):
+#   print(student[i])
+for i in student:
+  print(i)
+~~~
+
+
+
+## pyautogui
+
+**模态窗口（Modal Window）** 是一种 **必须处理后才能继续操作的窗口**。
+
+对话框是 **模态窗口**，意味着必须先关闭它，Python 脚本才会继续运行。
+
+~~~python
+
+import pyautogui as pg
+# print(pg.size())
+
+# for i in range(10):
+#   print(pg.position())
+# pg.alert("hello!", "msg",)
+# pg.confirm("Are you sure")
+# pg.prompt('What is your name?')
+# pg.password()
+# pg.alert(
+#   text='hello',
+#   title='msg',
+#   button='continue'
+# )
+# response = pg.confirm(
+#   text='点击数字',
+#   title='选择',
+#   buttons=['1','2','3']
+# )
+# if response == '1':
+#   pg.alert('first')
+# pg.alert(response)
+
+# img1 = pg.screenshot()
+# img1.save("test1.png")
+
+# location = pg.locateCenterOnScreen('image.png')
+# pg.click(location)
+
+# for i in range(10):
+#   pg.click()
+#   pg.press('shift')
+#   pg.move(15,0)
+
+# x, y = pg.size()
+# pg.moveTo(x/2,y/2)
+
+
+# pg.write('hello')
+
+
+# pg.mouseDown()
+pg.keyDown('shift')
+
+# for i in range(5):
+#   pg.move(10,0)
+
+# pg.keyUp('shift')
+# pg.mouseUp()
+# 一定要解除
+
+
+# 监听行为呢
+# 可以结合opencv 和 
+
+
+~~~
+
+### **⚠ 为什么执行结束后 Shift 仍然保持按下？**
+
+
+
+
+
+1. `pg.keyDown('shift')` 只是**模拟按键按下**，但不会**自动执行 keyUp()**。
+2. **Python 脚本运行结束，并不会自动释放按键**，所以 Shift **一直保持按住状态**。
+3. 如果你执行了 `pg.keyDown("shift")`，但**没有运行 `pg.keyUp("shift")`**，你的系统会一直保持 Shift 被按住的状态，可能导致输入异常（如全大写、快捷键误触发等）。
+
+
+
+
+
+## Opencv
+
+
+
+## python-docx --- office 自动化的入门
+
+
+
+![image-20250205145203478](https://cdn.jsdelivr.net/gh/kasahuki/os_test@main/img/image-20250205145203478.png)
+
+~~~python
+from docx import Document
+# 库只支持docx 文档
+
+dx = Document()
+
+# 添加文本本质是依靠操作段落做到的
+# p1 = dx.add_paragraph('senjay')
+# print(type(p1))
+# print(dx.paragraphs)
+# print(len(dx.paragraphs))
+# print(p1.text)
+# p1.clear() # 清除这个段落
+# print(p1.text)
+
+# p1 = dx.add_paragraph("第一段")
+# p2 = dx.add_heading("第二章")
+# p1.insert_paragraph_before("第0章")
+# dx.add_page_break() # 注意分页符也是段落
+# p3 = dx.add_heading("第三章")
+# p = p2._element # 先获取标签
+# p.getparent().remove(p) # clear方法 也只是删除文本 并没有删除段落也没有删除段落符 
+# p._p = p._element = None # 释放内存
+
+p1 = dx.add_paragraph("senjay")
+p2 = dx.add_paragraph("senjay")
+p3 = dx.add_paragraph("senjay")
+p4 = dx.add_paragraph("senjay")
+p5 = dx.add_paragraph("senjay")
+
+# p1.alignment = ''   左/右/居中对齐  -- 段落样式
+# p1.style = '' 打印这个段落样式
+# p1.style.delete() 删除样式 恢复成默认的样子也就是正文样式
+# dx.add_paragraph("text", style = "")
+# for paragraph in dx.paragraphs: 遍历所有段落
+dx.save('./office/word/test.docx')  # ./ 表示当前目录通常指的是你当前操作的工作目录或者文件所在的目录
+
+~~~
+
+![image-20250205155921566](https://cdn.jsdelivr.net/gh/kasahuki/os_test@main/img/image-20250205155921566.png)
+
+
+
+段前/段后 （这两个是不同段落间的）/行间距（这个是一个段落文字间的）
+
+**在当前段落添加文本直接添加run就行**
+
+run是相对于一个段落的 p.runs
+
+**同理也有run的样式**
+
+
+
+如果要根据一个模板制作上百个文件 直接根据数据excel 表格结合word 写一个函数封装逻辑 获取excel数据 用数据结构存储
+
+然后分别根据word样式特征==装填文字==
+
+也可以用变量包装重要信息 使用{}使用变量
+
+~~~python
+from docx import Document
+from docx.enum.text import WD_UNDERLINE
+
+# 打开文档
+doc = Document('./office/word/produ1.docx')  # 替换为你的文档路径
+
+# 遍历文档中所有的段落
+for paragraph in doc.paragraphs:
+    # 遍历段落中的每一个run
+    runs = paragraph.runs
+    i = 0
+    while i < len(runs):
+        if runs[i].underline and runs[i].text.startswith(" "):
+           run = runs[i]
+           while i + 1 < len(runs) and runs[i].underline and runs[i].text.startswith(" "):
+               run.text += runs[i+1].text
+               i+=1
+           run.text="5245"
+        i+=1
+
+        
+
+        
+# 保存修改后的文档
+doc.save('./office/word/produ1.docx')
+
+~~~
+
+
+
+
+
+
+
+## openpyxl & pandas
+
+
+
+---
+
+
+
+# 网络爬虫库相关
+
+
+
+**`requests`**:
+
+- 通过直接发送 HTTP 请求与服务器交互，模拟浏览器发送 GET、POST 等请求，并获取响应。
+- 主要用于与服务器进行数据交互，**不模拟浏览器的用户行为**，因此不处理 JavaScript 动态渲染内容。
+- 更适合用于 **抓取静态网页** 或者通过 API 获取数据。
+
+**`selenium`**:
+
+- 通过控制真实浏览器（如 Chrome、Firefox）来模拟用户的操作（点击、输入、滚动等），可以执行 JavaScript 并加载网页的完整内容。
+- **适用于动态网页**，即页面内容由 JavaScript 渲染生成的情况。
+- 在执行操作时，会打开一个图形化的浏览器界面或者以无头模式运行（没有 GUI 界面的浏览器）。
